@@ -53,7 +53,7 @@ class Image(TimeStampedModel):
     model = models.ForeignKey(Model, on_delete=models.CASCADE, related_name='images')
 
     def __str__(self):
-        return self.path
+        return self.path.name if self.path else "No Image"
 
 
 class Type(TimeStampedModel):

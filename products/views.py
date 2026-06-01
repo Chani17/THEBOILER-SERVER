@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import Product, Model
-from .serializers import ProductListSerializer
+from .serializers import ProductListSerializer, ModelDetailSerializer
 from django.db.models import Prefetch
 
 class ProductListView(generics.ListAPIView):
@@ -27,3 +27,17 @@ class ProductListView(generics.ListAPIView):
             queryset = queryset.filter(category__name=category_id)
 
         return queryset
+
+
+class ModelDetailView(generics.RetrieveAPIView):
+    serializer_class = ModelDetailSerializer
+
+    def get_queryset(self):
+        # 모든 관계 데이터를 한 번에 Join/Fetch 해오도록 쿼리 최적화
+        return Model.objects.all().select_related(
+            'brand',
+            'product__category'
+        ).prefetch_related(
+            'images',
+            'types__capacities'
+        )

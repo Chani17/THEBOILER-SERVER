@@ -34,7 +34,6 @@ class Product(TimeStampedModel):
 
 class Brand(TimeStampedModel):
     name = models.CharField(max_length=50, verbose_name='브랜드 이름')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='brands')
 
     def __str__(self):
         return self.name
@@ -43,6 +42,7 @@ class Brand(TimeStampedModel):
 class Model(TimeStampedModel):
     code = models.CharField(max_length=50, verbose_name='모델 이름')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='models')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='models')
     
     def __str__(self):
         return self.code

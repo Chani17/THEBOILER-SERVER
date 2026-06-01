@@ -14,6 +14,7 @@ from .models import (
 )
 
 
+# --- Inlines ---
 class CategoryInline(admin.TabularInline):
     model = Category
     extra = 1
@@ -24,9 +25,15 @@ class ProductInline(admin.TabularInline):
     extra = 1
 
 
-class ModelInline(admin.TabularInline):
+class ModelInlineForProduct(admin.TabularInline):
     model = Model
     fields = ("code", "brand")
+    extra = 1
+
+
+class ModelInlineForBrand(admin.TabularInline):
+    model = Model
+    fields = ("code", "product")
     extra = 1
 
 
@@ -60,6 +67,8 @@ class CapacityInline(admin.TabularInline):
     extra = 1
 
 
+# --- ModelAdmin ---
+
 @admin.register(Classification)
 class ClassificationAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at", "updated_at")
@@ -80,31 +89,32 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "category", "created_at", "updated_at")
     list_filter = ("category",)
     search_fields = ("name",)
-    inlines = (ModelInline,)
+    inlines = (ModelInlineForProduct,)
 
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at", "updated_at")
     search_fields = ("name",)
+    inlines = (ModelInlineForBrand,)
 
 
 @admin.register(Model)
 class BoilerModelAdmin(admin.ModelAdmin):
     list_display = (
         "code",
-        "brand",
-        "get_classification",
-        "get_category",
         "product",
+        "brand",
+        "get_category",
+        "get_classification",
         "created_at",
         "updated_at",
     )
     list_filter = (
         "brand",
-        "product__category__classification",
-        "product__category",
         "product",
+        "product__category",
+        "product__category__classification",
     )
     search_fields = (
         "code",
@@ -113,21 +123,21 @@ class BoilerModelAdmin(admin.ModelAdmin):
         "product__category__name",
         "product__category__classification__name",
     )
-    readonly_fields = ("get_classification", "get_category")
-    fields = ("brand", "get_classification", "get_category", "product", "code")
+    readonly_fields = ("get_category", "get_classification")
+    fields = ("get_classification", "get_category", "product", "brand", "code")
     inlines = (ImageInline, TypeInline)
-
-    @admin.display(description="분류")
-    def get_classification(self, obj):
-        if not obj or not obj.product_id:
-            return "-"
-        return obj.product.category.classification
 
     @admin.display(description="카테고리")
     def get_category(self, obj):
-        if not obj or not obj.product_id:
-            return "-"
-        return obj.product.category
+        if obj.product_id:
+            return obj.product.category
+        return "-"
+
+    @admin.display(description="분류")
+    def get_classification(self, obj):
+        if obj.product_id and obj.product.category_id:
+            return obj.product.category.classification
+        return "-"
 
 
 @admin.register(Image)

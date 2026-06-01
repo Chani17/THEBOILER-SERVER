@@ -16,7 +16,7 @@ class ProductListView(generics.ListAPIView):
             'category',
             'category__classification'
         ).prefetch_related(
-            'brands__models'
+            'models__brand',
         )
 
         # 동적 쿼리문

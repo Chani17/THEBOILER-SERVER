@@ -4,5 +4,5 @@ from .views import ProductListView, ModelDetailView
 urlpatterns = [
     # GET /products
     path('', ProductListView.as_view(), name='product-list'),
-    path('models/<int:id>/', ModelDetailView.as_view(), name='model-detail')
+    path('models/<int:pk>/', ModelDetailView.as_view(), name='model-detail')
 ]

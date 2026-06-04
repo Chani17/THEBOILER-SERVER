@@ -8,8 +8,8 @@ class ProductListView(generics.ListAPIView):
 
     def get_queryset(self):
         # Query Parameter 추출
-        classification_id = self.request.query_params.get('classification')
-        category_id = self.request.query_params.get('category')
+        classification_name = self.request.query_params.get('classification')
+        category_name = self.request.query_params.get('category')
 
         # 쿼리 최적화
         queryset = Product.objects.select_related(
@@ -20,11 +20,11 @@ class ProductListView(generics.ListAPIView):
         )
 
         # 동적 쿼리문
-        if classification_id:
-            queryset = queryset.filter(category__classification__name=classification_id)
+        if classification_name:
+            queryset = queryset.filter(category__classification__name=classification_name)
 
-        if category_id:
-            queryset = queryset.filter(category__name=category_id)
+        if category_name:
+            queryset = queryset.filter(category__name=category_name)
 
         return queryset
 

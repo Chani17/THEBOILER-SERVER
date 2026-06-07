@@ -9,6 +9,33 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
+def get_image_upload_path(instance, filename):
+    """
+    제품 이미지 저장 경로 설정
+    경로 형식: products/images/{classification_name}/{category}/{product}/{brand}/{model_code}/{filename}
+    """
+    try:
+        model = instance.model
+        brand = model.brand
+        product = model.product
+        category = product.category
+        classification = category.classification
+
+        # 공백을 언더바(_)로 치환하여 경로 안정성 확보
+        classification_name = classification.name.replace(" ", "_")
+        category_name = category.name.replace(" ", "_")
+        product_name = product.name.replace(" ", "_")
+        brand_name = brand.name.replace(" ", "_")
+        model_code = model.code.replace(" ", "_")
+
+        # 최종 경로 조합
+        return f'products/images/{classification_name}/{category_name}/{product_name}/{brand_name}/{model_code}/{filename}'
+
+    except AttributeError:
+        # 관계 설정에 문제가 있을 경우를 대비한 대체 경로
+        return f'products/images/others/{filename}'
+
+
 class Classification(TimeStampedModel):
     name = models.CharField(max_length=50, verbose_name='분류 이름')
 
@@ -49,7 +76,7 @@ class Model(TimeStampedModel):
 
 
 class Image(TimeStampedModel):
-    path = models.ImageField(upload_to='products/image/', verbose_name='제품 이미지')
+    path = models.ImageField(upload_to=get_image_upload_path, verbose_name='제품 이미지')
     model = models.ForeignKey(Model, on_delete=models.CASCADE, related_name='images')
 
     def __str__(self):

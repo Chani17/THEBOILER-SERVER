@@ -16,11 +16,13 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGIN = True
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
     "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -33,6 +35,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

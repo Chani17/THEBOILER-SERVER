@@ -15,8 +15,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = ["*"]
-CORS_ALLOW_ALL_ORIGIN = True
+ALLOWED_HOSTS = ["theboiler-server.onrender.com"]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
